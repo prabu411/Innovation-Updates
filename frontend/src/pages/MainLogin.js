@@ -26,6 +26,7 @@ const MainLogin = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    console.log('MainLogin: Attempting login with production API');
 
     try {
       const user = await login(formData.email, formData.password, formData.year, formData.section);
