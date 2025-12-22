@@ -13,7 +13,10 @@ const Login = () => {
 
   const checkServerHealth = async () => {
     try {
-      await axios.get('http://localhost:5003/api/health');
+      const API_URL = process.env.NODE_ENV === 'production' 
+        ? 'https://innovation-updates.onrender.com'
+        : 'http://localhost:5003';
+      await axios.get(`${API_URL}/api/health`);
       return { ok: true };
     } catch (err) {
       return { ok: false, message: err.message };
