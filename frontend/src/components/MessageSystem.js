@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import API from '../services/api';
 import { Send, MessageSquare } from 'lucide-react';
+import { APP_VERSION } from '../version';
 
 const MessageSystem = ({ userRole }) => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
 
   useEffect(() => {
+    console.log('MessageSystem loaded, version:', APP_VERSION);
     fetchMessages();
   }, []);
 
