@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import API from '../services/api';
 import { Send, MessageSquare } from 'lucide-react';
 
 const MessageSystem = ({ userRole }) => {
@@ -12,11 +12,8 @@ const MessageSystem = ({ userRole }) => {
 
   const fetchMessages = async () => {
     try {
-      const token = localStorage.getItem('token');
-      console.log('Fetching messages with token:', token ? 'Present' : 'Missing');
-      const { data } = await axios.get('http://localhost:5003/api/messages', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      console.log('Fetching messages...');
+      const { data } = await API.get('/messages');
       console.log('Messages fetched:', data);
       setMessages(data);
     } catch (error) {
@@ -29,11 +26,8 @@ const MessageSystem = ({ userRole }) => {
     if (!newMessage.trim()) return;
 
     try {
-      const token = localStorage.getItem('token');
       console.log('Sending message:', newMessage);
-      const response = await axios.post('http://localhost:5003/api/messages', { content: newMessage }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const response = await API.post('/messages', { content: newMessage });
       console.log('Message sent:', response.data);
       setNewMessage('');
       fetchMessages();
