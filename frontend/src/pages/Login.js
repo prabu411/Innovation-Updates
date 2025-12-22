@@ -2,7 +2,6 @@ import React, { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { Zap, User, ShieldCheck } from 'lucide-react';
-import axios from 'axios';
 
 const Login = () => {
   const [loginType, setLoginType] = useState('student');
@@ -11,21 +10,10 @@ const Login = () => {
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  const checkServerHealth = async () => {
-    try {
-      const API_URL = process.env.NODE_ENV === 'production' 
-        ? 'https://innovation-updates.onrender.com'
-        : 'http://localhost:5003';
-      await axios.get(`${API_URL}/api/health`);
-      return { ok: true };
-    } catch (err) {
-      return { ok: false, message: err.message };
-    }
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    console.log('Login v1.0.1: Direct login attempt');
 
     // Validate Login Type
     if (loginType === 'student' && formData.email === 'admin@innovation.com') {
