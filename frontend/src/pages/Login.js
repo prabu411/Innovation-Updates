@@ -27,14 +27,7 @@ const Login = () => {
     e.preventDefault();
     setError('');
 
-    // 1. Check if server is running
-    const health = await checkServerHealth();
-    if (!health.ok) {
-      setError(`CRITICAL ERROR: Backend server is OFFLINE. (${health.message}). Please ensure the server is running on port 5003.`);
-      return;
-    }
-
-    // 2. Validate Login Type
+    // Validate Login Type
     if (loginType === 'student' && formData.email === 'admin@innovation.com') {
       setError('Admin login is not allowed in the student portal. Please switch to the Admin tab.');
       return;

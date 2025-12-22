@@ -27,12 +27,6 @@ const MainLogin = () => {
     e.preventDefault();
     setError('');
 
-    const isServerRunning = await checkServerHealth();
-    if (!isServerRunning) {
-      setError('CRITICAL ERROR: Backend server is OFFLINE.');
-      return;
-    }
-
     try {
       const user = await login(formData.email, formData.password, formData.year, formData.section);
       
