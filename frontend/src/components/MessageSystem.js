@@ -27,12 +27,18 @@ const MessageSystem = ({ userRole }) => {
 
     try {
       console.log('Sending message:', newMessage);
+      console.log('API base URL:', API.defaults.baseURL);
       const response = await API.post('/messages', { content: newMessage });
-      console.log('Message sent:', response.data);
+      console.log('Message sent successfully:', response.data);
       setNewMessage('');
       fetchMessages();
     } catch (error) {
-      console.error('Error sending message:', error.response?.data || error.message);
+      console.error('Detailed error:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+        config: error.config
+      });
       alert('Failed to send message: ' + (error.response?.data?.message || error.message));
     }
   };
