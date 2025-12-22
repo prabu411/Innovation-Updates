@@ -45,12 +45,18 @@ exports.getMyApplications = async (req, res) => {
 // Coordinator: Get all applications with populated student and hackathon
 exports.getAllApplications = async (req, res) => {
   try {
+    console.log('Fetching all applications...');
     const applications = await Application.find()
       .populate('student', 'name email rollNumber department year section')
       .populate('hackathon', 'name dates mode')
       .sort('-createdAt');
+    
+    console.log('Found applications:', applications.length);
+    console.log('Sample application:', applications[0]);
+    
     res.json(applications);
   } catch (error) {
+    console.error('Error in getAllApplications:', error);
     res.status(500).json({ message: error.message });
   }
 };
