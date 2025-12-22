@@ -1,7 +1,9 @@
 import axios from 'axios';
 
-// Use environment variable for API URL, fallback to localhost for development
-const API_URL = process.env.REACT_APP_API_ORIGIN || 'http://localhost:5003';
+// Use production API URL for deployment
+const API_URL = process.env.NODE_ENV === 'production' 
+  ? 'https://innovation-updates.onrender.com'
+  : process.env.REACT_APP_API_ORIGIN || 'http://localhost:5003';
 
 const API = axios.create({
   baseURL: `${API_URL}/api`
