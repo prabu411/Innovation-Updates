@@ -98,7 +98,7 @@ const AvailableEvents = ({ hackathons, myApplications, myRegistrations = [], ref
           filteredEvents.map((hackathon) => (
             <div key={hackathon._id} className="bg-gray-700 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition">
               {hackathon.poster && (
-                <img src={`http://localhost:5003/${hackathon.poster}`} alt={hackathon.name} className="w-full h-32 object-cover" />
+                <img src={`${process.env.NODE_ENV === 'production' ? 'https://innovation-updates.onrender.com' : 'http://localhost:5003'}/${hackathon.poster}`} alt={hackathon.name} className="w-full h-32 object-cover" />
               )}
               <div className="p-4">
                 <h3 className="text-lg font-bold text-white mb-2">{hackathon.name}</h3>

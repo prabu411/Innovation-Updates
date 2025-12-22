@@ -47,14 +47,18 @@ const HackathonManager = ({ hackathons, fetchHackathons, refreshStudents, should
 
   const fetchApplications = async () => {
     try {
+      console.log('HackathonManager: Fetching applications...');
       const { data } = await applicationAPI.getAllApplications();
+      console.log('HackathonManager: Applications fetched:', data.length);
+      console.log('HackathonManager: Sample application:', data[0]);
       setApplications(data);
       // Also refresh the parent's student data
       if (refreshStudents) {
         refreshStudents();
       }
     } catch (error) {
-      console.error('Error fetching applications:', error);
+      console.error('HackathonManager: Error fetching applications:', error);
+      console.error('HackathonManager: Error details:', error.response?.data);
     }
   };
 
@@ -180,7 +184,7 @@ const HackathonManager = ({ hackathons, fetchHackathons, refreshStudents, should
           
           return (
             <div key={hackathon._id} className="glassmorphism rounded-xl overflow-hidden group transition-all hover:border-cyan-500 border border-gray-800">
-              {hackathon.poster && <img src={`http://localhost:5003/${hackathon.poster}`} alt={hackathon.name} className="w-full h-40 object-cover" />}
+              {hackathon.poster && <img src={`${process.env.NODE_ENV === 'production' ? 'https://innovation-updates.onrender.com' : 'http://localhost:5003'}/${hackathon.poster}`} alt={hackathon.name} className="w-full h-40 object-cover" />}
               <div className="p-6">
                 <h3 className="text-xl font-bold text-white mb-2">{hackathon.name}</h3>
                 <p className="text-gray-400 text-sm mb-3">by {hackathon.organizer}</p>
