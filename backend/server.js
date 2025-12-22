@@ -24,7 +24,10 @@ connectDB();
 // CORS configuration for production and development
 const corsOptions = {
   origin: process.env.NODE_ENV === 'production' 
-    ? ['https://innovation-updates.vercel.app'] 
+    ? [
+        'https://innovation-updates.vercel.app',
+        /https:\/\/innovation-updates-.*\.vercel\.app$/
+      ]
     : ['http://localhost:3000', 'http://localhost:3001'],
   credentials: true,
   optionsSuccessStatus: 200
