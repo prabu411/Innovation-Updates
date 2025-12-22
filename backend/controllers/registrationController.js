@@ -25,15 +25,17 @@ exports.createRegistration = async (req, res) => {
 
 exports.getRegistrations = async (req, res) => {
   try {
-    // Students (role: 'innovator') should only see their own registrations.
-    if (req.user.role === 'innovator') {
-      const registrations = await Registration.find({ user: req.user._id }).populate('hackathon');
-      return res.status(200).json(registrations);
-    }
-    // Coordinators / admins can view all registrations
-    const registrations = await Registration.find().populate('hackathon').populate('user');
+    console.log('Fetching registrations for role:', req.user.role);
+    // Coordinators and Student Admins can view all registrations with populated user data
+    const registrations = await Registration.find()
+      .populate('hackathon', 'name dates mode')
+      .populate('user', 'name email rollNumber department year section')
+      .sort('-createdAt');
+    
+    console.log('Found registrations:', registrations.length);
     res.status(200).json(registrations);
   } catch (error) {
+    console.error('Error in getRegistrations:', error);
     res.status(500).json({ message: error.message });
   }
 };

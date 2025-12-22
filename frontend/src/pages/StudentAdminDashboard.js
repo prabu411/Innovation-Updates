@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { LogOut, Users, FileDown, BookOpen } from 'lucide-react';
 import MessageSystem from '../components/MessageSystem';
 import { AuthContext } from '../context/AuthContext';
-import { applicationAPI } from '../services/api';
+import { applicationAPI, registrationAPI } from '../services/api';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import * as XLSX from 'xlsx';
@@ -19,7 +19,22 @@ const StudentAdminDashboard = () => {
 
   useEffect(() => {
     fetchApplications();
+    fetchRegistrations();
   }, []);
+
+  const [allRegistrations, setAllRegistrations] = useState([]);
+
+  const fetchRegistrations = async () => {
+    try {
+      console.log('Fetching registrations...');
+      const { data } = await registrationAPI.getMyRegistrations();
+      console.log('Registrations fetched:', data);
+      setAllRegistrations(data || []);
+    } catch (error) {
+      console.error('Error fetching registrations:', error);
+      setAllRegistrations([]);
+    }
+  };
 
   const fetchApplications = async () => {
     try {
@@ -88,11 +103,13 @@ const StudentAdminDashboard = () => {
   // Get students grouped by their participation - FILTER BY YEAR AND SECTION
   const getStudentsForYearSection = () => {
     console.log('All applications:', allApplications);
+    console.log('All registrations:', allRegistrations);
     console.log('Applications length:', allApplications.length);
+    console.log('Registrations length:', allRegistrations.length);
     console.log('Filtering for:', activeYear, activeSection);
     
-    if (allApplications.length === 0) {
-      console.log('No applications found');
+    if (allApplications.length === 0 && allRegistrations.length === 0) {
+      console.log('No applications or registrations found');
       return [];
     }
     
@@ -104,12 +121,13 @@ const StudentAdminDashboard = () => {
     
     console.log('Target year:', targetYear, 'Target section:', targetSection);
     
-    // Group applications by student - FILTER BY YEAR AND SECTION
+    // Group applications and registrations by student - FILTER BY YEAR AND SECTION
     const studentMap = new Map();
     
+    // Process applications
     allApplications.forEach((app, index) => {
       if (app.student) {
-        console.log(`Student ${index}:`, {
+        console.log(`Application ${index}:`, {
           name: app.student.name,
           year: app.student.year,
           section: app.student.section,
@@ -129,6 +147,36 @@ const StudentAdminDashboard = () => {
               email: app.student.email || 'N/A',
               year: app.student.year || 'N/A',
               section: app.student.section || 'N/A',
+              events: 1
+            });
+          }
+        }
+      }
+    });
+    
+    // Process registrations
+    allRegistrations.forEach((reg, index) => {
+      if (reg.user) {
+        console.log(`Registration ${index}:`, {
+          name: reg.user.name,
+          year: reg.user.year,
+          section: reg.user.section,
+          matches: reg.user.year === targetYear && reg.user.section === targetSection
+        });
+        
+        // Only include students matching the selected year and section
+        if (reg.user.year === targetYear && reg.user.section === targetSection) {
+          const studentId = reg.user._id;
+          
+          if (studentMap.has(studentId)) {
+            studentMap.get(studentId).events += 1;
+          } else {
+            studentMap.set(studentId, {
+              name: reg.user.name || 'N/A',
+              roll: reg.user.rollNumber || 'N/A',
+              email: reg.user.email || 'N/A',
+              year: reg.user.year || 'N/A',
+              section: reg.user.section || 'N/A',
               events: 1
             });
           }
@@ -241,7 +289,7 @@ const StudentAdminDashboard = () => {
                 ) : students.length === 0 ? (
                   <tr>
                     <td colSpan="4" className="p-4 text-center text-gray-400">
-                      No students found. Total applications fetched: {allApplications.length}
+                      No students found. Applications: {allApplications.length}, Registrations: {allRegistrations.length}
                       <br />
                       <small>Check console for debugging info</small>
                     </td>

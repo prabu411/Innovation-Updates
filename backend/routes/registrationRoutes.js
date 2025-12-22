@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const registrationController = require('../controllers/registrationController');
-const authMiddleware = require('../middleware/authMiddleware');
+const { protect, coordinatorOnly } = require('../middleware/auth');
 
-router.post('/', authMiddleware, registrationController.createRegistration);
-router.get('/', authMiddleware, registrationController.getRegistrations);
+router.post('/', protect, registrationController.createRegistration);
+router.get('/', protect, coordinatorOnly, registrationController.getRegistrations);
 
 module.exports = router;
