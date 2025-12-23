@@ -64,16 +64,6 @@ exports.resetData = async (req, res) => {
         department: 'CSE',
         year: 2,
         section: 'B'
-      },
-      {
-        name: 'Anita Singh',
-        email: 'anita.singh@sece.ac.in',
-        password: 'password123', 
-        role: 'student',
-        rollNumber: '7376221CS004',
-        department: 'CSE',
-        year: 3,
-        section: 'A'
       }
     ]);
     console.log('✅ Created students:', students.length);
@@ -82,30 +72,27 @@ exports.resetData = async (req, res) => {
     const applications = await Application.create([
       { hackathon: hackathon._id, student: students[0]._id, status: 'pending' },
       { hackathon: hackathon._id, student: students[1]._id, status: 'approved' },
-      { hackathon: hackathon._id, student: students[2]._id, status: 'pending' },
-      { hackathon: hackathon._id, student: students[3]._id, status: 'rejected' }
+      { hackathon: hackathon._id, student: students[2]._id, status: 'pending' }
     ]);
     console.log('✅ Created applications:', applications.length);
 
-    // Verify with populate
-    const verifyApps = await Application.find()
-      .populate('student', 'name rollNumber year section')
+    // Test the populate immediately
+    const testApps = await Application.find()
+      .populate('student', 'name rollNumber year section department email')
       .populate('hackathon', 'name');
     
-    const summary = verifyApps.map(app => ({
-      student: app.student?.name || 'MISSING',
-      rollNumber: app.student?.rollNumber || 'N/A',
-      hackathon: app.hackathon?.name || 'MISSING',
-      status: app.status
-    }));
+    console.log('✅ Populate test results:');
+    testApps.forEach(app => {
+      console.log(`- ${app.student?.name || 'NULL'} → ${app.hackathon?.name || 'NULL'}`);
+    });
 
     res.json({
       message: 'Data reset successful',
+      applications: testApps,
       summary: {
         hackathons: 1,
         students: students.length,
-        applications: applications.length,
-        verification: summary
+        applications: applications.length
       }
     });
 
