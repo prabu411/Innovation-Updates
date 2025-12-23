@@ -23,6 +23,8 @@ const StudentManager = ({ hackathons }) => {
       const data = response.data;
       console.log('Raw applications data:', data);
       console.log('Data type:', typeof data, 'Is array:', Array.isArray(data));
+      console.log('First application structure:', data[0]);
+      console.log('Student data in first app:', data[0]?.student);
       
       if (!Array.isArray(data)) {
         console.error('Data is not an array:', data);
