@@ -204,27 +204,30 @@ const HackathonManager = ({ hackathons, fetchHackathons, refreshStudents, should
                 </div>
                 <p className="text-gray-400 text-sm mb-4 line-clamp-2">{hackathon.description}</p>
                 
-                {studentCount > 0 && (
-                  <button 
-                    onClick={() => toggleStudentDetails(hackathon._id)}
-                    className="w-full mb-4 flex items-center justify-center gap-2 px-3 py-2 bg-gray-800 text-cyan-400 rounded-lg hover:bg-gray-700 transition"
-                  >
-                    {isExpanded ? <EyeOff size={16} /> : <Eye size={16} />}
-                    {isExpanded ? 'Hide' : 'View'} Student Details
-                  </button>
-                )}
+                {/* Always show the button for testing, regardless of count */}
+                <button 
+                  onClick={() => toggleStudentDetails(hackathon._id)}
+                  className="w-full mb-4 flex items-center justify-center gap-2 px-3 py-2 bg-gray-800 text-cyan-400 rounded-lg hover:bg-gray-700 transition"
+                >
+                  {isExpanded ? <EyeOff size={16} /> : <Eye size={16} />}
+                  {isExpanded ? 'Hide' : 'View'} Student Details ({studentCount})
+                </button>
                 
-                {isExpanded && students.length > 0 && (
+                {isExpanded && (
                   <div className="mb-4 p-3 bg-gray-800/50 rounded-lg max-h-40 overflow-y-auto">
-                    <h4 className="text-sm font-semibold text-white mb-2">Applied Students:</h4>
-                    <div className="space-y-1">
-                      {students.map((app) => (
-                        <div key={app._id} className="text-xs text-gray-300 flex justify-between">
-                          <span>{app.student?.name || 'Unknown'}</span>
-                          <span className="text-gray-500">{app.student?.rollNumber || 'N/A'} | {app.student?.department || 'N/A'}</span>
-                        </div>
-                      ))}
-                    </div>
+                    <h4 className="text-sm font-semibold text-white mb-2">Applied Students ({students.length}):</h4>
+                    {students.length === 0 ? (
+                      <p className="text-gray-400 text-xs">No applications yet. Debug info in console.</p>
+                    ) : (
+                      <div className="space-y-1">
+                        {students.map((app) => (
+                          <div key={app._id} className="text-xs text-gray-300 flex justify-between">
+                            <span>{app.student?.name || 'Unknown'}</span>
+                            <span className="text-gray-500">{app.student?.rollNumber || 'N/A'} | {app.student?.department || 'N/A'}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 )}
                 
