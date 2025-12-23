@@ -6,6 +6,17 @@ const AdminPanel = () => {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
 
+  const testDatabase = async () => {
+    try {
+      const response = await API.get('/test');
+      setResult(response.data);
+      console.log('Database test result:', response.data);
+    } catch (error) {
+      console.error('Test failed:', error);
+      alert('Test failed: ' + (error.response?.data?.message || error.message));
+    }
+  };
+
   const resetData = async () => {
     if (!window.confirm('This will clean ALL data (hackathons, students, applications). Are you sure?')) return;
     
@@ -29,21 +40,39 @@ const AdminPanel = () => {
         Admin Panel
       </h3>
       
-      <button
-        onClick={resetData}
-        disabled={loading}
-        className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50"
-      >
-        <RefreshCw className={loading ? 'animate-spin' : ''} size={18} />
-        {loading ? 'Cleaning...' : 'Clean All Data'}
-      </button>
+      <div className="flex gap-2">
+        <button
+          onClick={resetData}
+          disabled={loading}
+          className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50"
+        >
+          <RefreshCw className={loading ? 'animate-spin' : ''} size={18} />
+          {loading ? 'Cleaning...' : 'Clean All Data'}
+        </button>
+        
+        <button
+          onClick={testDatabase}
+          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+        >
+          <Database size={18} />
+          Test Database
+        </button>
+      </div>
       
       {result && (
-        <div className="mt-4 p-3 bg-green-900/30 border border-green-800 rounded-lg">
-          <p className="text-green-300 text-sm">✅ {result.message}</p>
+        <div className="mt-4 p-3 bg-blue-900/30 border border-blue-800 rounded-lg">
+          <p className="text-blue-300 text-sm">📊 Database Status:</p>
           <p className="text-gray-400 text-xs mt-1">
-            Created: {result.summary?.hackathons} hackathons, {result.summary?.students} students, {result.summary?.applications} applications
+            Applications: {result.counts?.applications || 0} | 
+            Students: {result.counts?.students || 0} | 
+            Hackathons: {result.counts?.hackathons || 0}
           </p>
+          <details className="mt-2">
+            <summary className="text-xs text-gray-500 cursor-pointer">View Raw Data</summary>
+            <pre className="text-xs text-gray-400 mt-1 overflow-auto max-h-32">
+              {JSON.stringify(result, null, 2)}
+            </pre>
+          </details>
         </div>
       )}
     </div>
