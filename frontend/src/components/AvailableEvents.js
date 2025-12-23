@@ -9,8 +9,20 @@ const AvailableEvents = ({ hackathons, myApplications, myRegistrations = [], ref
   const [departmentFilter, setDepartmentFilter] = useState('all');
 
   const isApplied = (hackathonId) => {
-    const hasApplication = myApplications.some(app => app.hackathon._id === hackathonId);
-    const hasRegistration = myRegistrations.some(reg => reg.hackathon._id === hackathonId);
+    console.log('Checking if applied to hackathon:', hackathonId);
+    console.log('My applications:', myApplications);
+    console.log('My registrations:', myRegistrations);
+    
+    const hasApplication = myApplications.some(app => {
+      console.log('Checking app:', app.hackathon?._id, 'vs', hackathonId);
+      return app.hackathon?._id === hackathonId;
+    });
+    const hasRegistration = myRegistrations.some(reg => {
+      console.log('Checking reg:', reg.hackathon?._id, 'vs', hackathonId);
+      return reg.hackathon?._id === hackathonId;
+    });
+    
+    console.log('Has application:', hasApplication, 'Has registration:', hasRegistration);
     return hasApplication || hasRegistration;
   };
 
