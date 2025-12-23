@@ -47,12 +47,27 @@ exports.getAllApplications = async (req, res) => {
   try {
     console.log('Fetching all applications...');
     const applications = await Application.find()
-      .populate('student', 'name email rollNumber department year section')
-      .populate('hackathon', 'name dates mode')
+      .populate({
+        path: 'student',
+        select: 'name email rollNumber department year section'
+      })
+      .populate({
+        path: 'hackathon', 
+        select: 'name dates mode'
+      })
       .sort('-createdAt');
     
     console.log('Found applications:', applications.length);
-    console.log('Sample application:', applications[0]);
+    
+    // Debug each application
+    applications.forEach((app, index) => {
+      console.log(`Application ${index}:`, {
+        id: app._id,
+        studentId: app.student?._id || 'NO_STUDENT_ID',
+        studentName: app.student?.name || 'NO_NAME',
+        hackathonName: app.hackathon?.name || 'NO_HACKATHON'
+      });
+    });
     
     res.json(applications);
   } catch (error) {
