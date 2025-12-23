@@ -13,6 +13,7 @@ exports.createHackathon = async (req, res) => {
     try {
       hackathonData.dates = dates ? JSON.parse(dates) : [];
     } catch (e) {
+      console.error('Date parsing error:', e);
       return res.status(400).json({ message: 'Invalid format for dates. Expected a JSON array string.' });
     }
 
@@ -20,6 +21,7 @@ exports.createHackathon = async (req, res) => {
     try {
       hackathonData.themes = themes ? JSON.parse(themes) : [];
     } catch (e) {
+      console.error('Themes parsing error:', e);
       return res.status(400).json({ message: 'Invalid format for themes. Expected a JSON array string.' });
     }
 
@@ -31,8 +33,12 @@ exports.createHackathon = async (req, res) => {
       hackathonData.eligibleDepartments = eligibleDepartments ? String(eligibleDepartments).split(',').map(s => s.trim()).filter(Boolean) : [];
     }
 
-    if (req.file) {
+    // Only add poster if file was uploaded successfully
+    if (req.file && req.file.path) {
       hackathonData.poster = req.file.path;
+      console.log('Poster uploaded:', req.file.path);
+    } else {
+      console.log('No poster uploaded');
     }
     
     hackathonData.createdBy = req.user.id;
@@ -40,9 +46,11 @@ exports.createHackathon = async (req, res) => {
     console.log("Attempting to create hackathon with data:", hackathonData);
 
     const hackathon = await Hackathon.create(hackathonData);
+    console.log('Hackathon created successfully:', hackathon._id);
     res.status(201).json(hackathon);
   } catch (error) {
     console.error("Create Hackathon Error:", error);
+    console.error("Error stack:", error.stack);
     res.status(500).json({ message: `Server error during hackathon creation: ${error.message}` });
   }
 };
