@@ -45,15 +45,48 @@ exports.getMyApplications = async (req, res) => {
 // Coordinator: Get all applications with populated student and hackathon
 exports.getAllApplications = async (req, res) => {
   try {
-    console.log('Fetching all applications...');
+    // First try with populate
     const applications = await Application.find()
-      .populate('student', 'name email rollNumber department year section')
-      .populate('hackathon', 'name dates mode')
+      .populate({
+        path: 'student',
+        select: 'name email rollNumber department year section',
+        model: 'User'
+      })
+      .populate({
+        path: 'hackathon', 
+        select: 'name dates mode',
+        model: 'Hackathon'
+      })
       .sort('-createdAt');
     
-    console.log('Found applications:', applications.length);
+    // Check if populate worked
+    const validApplications = applications.filter(app => 
+      app.student && app.hackathon && 
+      typeof app.student === 'object' && 
+      typeof app.hackathon === 'object'
+    );
     
-    // Return applications as-is, even if populate fails
+    if (validApplications.length === 0 && applications.length > 0) {
+      // Manual population as fallback
+      const User = require('../models/User');
+      const Hackathon = require('../models/Hackathon');
+      
+      const manualApplications = [];
+      
+      for (const app of applications) {
+        const student = await User.findById(app.student).select('name email rollNumber department year section');
+        const hackathon = await Hackathon.findById(app.hackathon).select('name dates mode');
+        
+        manualApplications.push({
+          ...app.toObject(),
+          student: student || { name: 'Unknown Student', rollNumber: 'N/A' },
+          hackathon: hackathon || { name: 'Unknown Hackathon' }
+        });
+      }
+      
+      return res.json(manualApplications);
+    }
+    
     res.json(applications);
   } catch (error) {
     console.error('Error in getAllApplications:', error);

@@ -50,6 +50,7 @@ app.use('/api/registrations', require('./routes/registrationRoutes'));
 app.use('/api/student-admin', require('./routes/studentAdminRoutes'));
 app.use('/api/admin', require('./routes/adminRoutes')); // Admin routes
 app.use('/api/test', require('./routes/testRoutes')); // Test route
+app.use('/api/debug', require('./routes/debugRoutes')); // Debug route
 
 app.get('/', (req, res) => {
   res.json({ message: 'Innovation Event Management API' });
