@@ -43,6 +43,7 @@ app.get('/api/health', (req, res) => res.status(200).send('OK'));
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/hackathons', require('./routes/hackathonRoutes'));
 app.use('/api/applications', require('./routes/applicationRoutes'));
+app.use('/api/applications-detailed', require('./routes/detailedApplicationRoutes')); // New detailed route
 app.use('/api/documents', require('./routes/documentRoutes'));
 app.use('/api/messages', require('./routes/messageRoutes')); // New route
 app.use('/api/registrations', require('./routes/registrationRoutes'));

@@ -178,7 +178,6 @@ exports.getParticipatedStudents = async (req, res) => {
   }
 };
 
-// New: Combined participants (applications + registrations) with filters for coordinator view
 exports.getParticipants = async (req, res) => {
   try {
     const { hackathonId, department, year, status } = req.query;

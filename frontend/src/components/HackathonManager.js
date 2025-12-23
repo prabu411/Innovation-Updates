@@ -47,18 +47,29 @@ const HackathonManager = ({ hackathons, fetchHackathons, refreshStudents, should
 
   const fetchApplications = async () => {
     try {
-      console.log('HackathonManager: Fetching applications...');
-      const { data } = await applicationAPI.getAllApplications();
-      console.log('HackathonManager: Applications fetched:', data.length);
+      console.log('HackathonManager: Fetching detailed applications...');
+      
+      const response = await fetch('/api/applications-detailed', {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+      
+      const data = await response.json();
+      console.log('HackathonManager: Detailed applications fetched:', data.length);
       console.log('HackathonManager: Sample application:', data[0]);
       setApplications(data);
-      // Also refresh the parent's student data
+      
       if (refreshStudents) {
         refreshStudents();
       }
     } catch (error) {
       console.error('HackathonManager: Error fetching applications:', error);
-      console.error('HackathonManager: Error details:', error.response?.data);
+      setApplications([]);
     }
   };
 

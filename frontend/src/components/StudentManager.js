@@ -15,16 +15,21 @@ const StudentManager = ({ hackathons }) => {
   const fetchStudents = async () => {
     try {
       setLoading(true);
-      console.log('Fetching all applications...');
+      console.log('Fetching detailed applications...');
       
-      // Test if API is accessible
-      const response = await applicationAPI.getAllApplications();
-      console.log('API Response:', response);
-      const data = response.data;
-      console.log('Raw applications data:', data);
-      console.log('Data type:', typeof data, 'Is array:', Array.isArray(data));
-      console.log('First application structure:', data[0]);
-      console.log('Student data in first app:', data[0]?.student);
+      // Use the new detailed endpoint
+      const response = await fetch('/api/applications-detailed', {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+      
+      const data = await response.json();
+      console.log('Detailed applications received:', data);
       
       if (!Array.isArray(data)) {
         console.error('Data is not an array:', data);
@@ -51,7 +56,6 @@ const StudentManager = ({ hackathons }) => {
       setStudents(filteredStudents);
     } catch (error) {
       console.error('Error fetching applications:', error);
-      console.error('Error details:', error.response?.data || error.message);
       setStudents([]);
     } finally {
       setLoading(false);
