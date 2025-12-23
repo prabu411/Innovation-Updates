@@ -65,7 +65,7 @@ const HackathonManager = ({ hackathons, fetchHackathons, refreshStudents, should
   };
 
   const getStudentsForHackathon = (hackathonId) => {
-    const filtered = applications.filter(app => app.hackathon?._id === hackathonId && app.student);
+    const filtered = applications.filter(app => app.hackathon?._id === hackathonId);
     console.log('Students for hackathon:', hackathonId, filtered);
     return filtered;
   };
