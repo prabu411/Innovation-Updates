@@ -63,11 +63,15 @@ const HackathonManager = ({ hackathons, fetchHackathons, refreshStudents, should
   };
 
   const getStudentCount = (hackathonId) => {
-    return applications.filter(app => app.hackathon && app.hackathon._id === hackathonId).length;
+    const count = applications.filter(app => app.hackathon?._id === hackathonId).length;
+    console.log(`Student count for hackathon ${hackathonId}:`, count);
+    return count;
   };
 
   const getStudentsForHackathon = (hackathonId) => {
-    return applications.filter(app => app.hackathon && app.student && app.hackathon._id === hackathonId);
+    const students = applications.filter(app => app.hackathon?._id === hackathonId && app.student);
+    console.log(`Students for hackathon ${hackathonId}:`, students);
+    return students;
   };
 
   const toggleStudentDetails = (hackathonId) => {

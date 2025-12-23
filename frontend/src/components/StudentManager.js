@@ -15,24 +15,17 @@ const StudentManager = ({ hackathons }) => {
   const fetchStudents = async () => {
     try {
       setLoading(true);
-      console.log('Fetching applications using existing API...');
+      console.log('Fetching applications using working API...');
       
-      // Use existing applicationAPI instead of new endpoint
       const response = await applicationAPI.getAllApplications();
-      const data = response.data;
-      console.log('Applications received:', data);
-      
-      if (!Array.isArray(data)) {
-        console.error('Data is not an array:', data);
-        setStudents([]);
-        return;
-      }
+      const data = response.data || [];
+      console.log('Applications received:', data.length);
+      console.log('Sample application:', data[0]);
       
       // Filter by hackathon if specified
       let filteredData = data;
       if (filters.hackathonId) {
         filteredData = data.filter(app => app.hackathon?._id === filters.hackathonId);
-        console.log('Filtered by hackathon:', filteredData);
       }
       
       // Filter by search term
@@ -43,7 +36,6 @@ const StudentManager = ({ hackathons }) => {
           (studentApp.student?.department && studentApp.student.department.toLowerCase().includes(filters.search.toLowerCase()))
         ) : filteredData;
       
-      console.log('Final filtered students:', filteredStudents);
       setStudents(filteredStudents);
     } catch (error) {
       console.error('Error fetching applications:', error);
