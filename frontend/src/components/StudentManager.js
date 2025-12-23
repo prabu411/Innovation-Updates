@@ -17,8 +17,12 @@ const StudentManager = ({ hackathons }) => {
       setLoading(true);
       console.log('Fetching detailed applications...');
       
-      // Use the new detailed endpoint
-      const response = await fetch('/api/applications-detailed', {
+      // Use the correct API URL with base URL
+      const API_URL = process.env.NODE_ENV === 'production' 
+        ? 'https://innovation-updates.onrender.com'
+        : 'http://localhost:5003';
+      
+      const response = await fetch(`${API_URL}/api/applications-detailed`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }

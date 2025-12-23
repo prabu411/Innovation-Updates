@@ -49,7 +49,11 @@ const HackathonManager = ({ hackathons, fetchHackathons, refreshStudents, should
     try {
       console.log('HackathonManager: Fetching detailed applications...');
       
-      const response = await fetch('/api/applications-detailed', {
+      const API_URL = process.env.NODE_ENV === 'production' 
+        ? 'https://innovation-updates.onrender.com'
+        : 'http://localhost:5003';
+      
+      const response = await fetch(`${API_URL}/api/applications-detailed`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -60,8 +64,7 @@ const HackathonManager = ({ hackathons, fetchHackathons, refreshStudents, should
       }
       
       const data = await response.json();
-      console.log('HackathonManager: Detailed applications fetched:', data.length);
-      console.log('HackathonManager: Sample application:', data[0]);
+      console.log('HackathonManager: Detailed applications fetched:', data);
       setApplications(data);
       
       if (refreshStudents) {
