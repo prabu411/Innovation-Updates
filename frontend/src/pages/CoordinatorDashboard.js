@@ -8,6 +8,7 @@ import StudentManager from '../components/StudentManager';
 import ReportsManager from '../components/ReportsManager';
 import IICManager from '../components/IICManager';
 import TheoryContext from '../components/TheoryContext';
+import AdminPanel from '../components/AdminPanel';
 
 const CoordinatorDashboard = () => {
   const [activeView, setActiveView] = useState('overview');
@@ -66,7 +67,12 @@ const CoordinatorDashboard = () => {
       case 'create-hackathon':
         return <HackathonManager hackathons={hackathons} fetchHackathons={fetchHackathons} refreshStudents={fetchInitialStudents} shouldOpenCreateModal={true} onClose={handleModalClose} />;
       case 'applied-students':
-        return <StudentManager hackathons={hackathons} />;
+        return (
+          <div>
+            <AdminPanel />
+            <StudentManager hackathons={hackathons} />
+          </div>
+        );
       case 'iic-activities':
         return <IICManager />;
       case 'reports':
