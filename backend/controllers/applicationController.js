@@ -46,30 +46,48 @@ exports.getMyApplications = async (req, res) => {
 exports.getAllApplications = async (req, res) => {
   try {
     console.log('Fetching all applications...');
-    const applications = await Application.find()
-      .populate({
-        path: 'student',
-        select: 'name email rollNumber department year section'
-      })
-      .populate({
-        path: 'hackathon', 
-        select: 'name dates mode'
-      })
-      .sort('-createdAt');
     
-    console.log('Found applications:', applications.length);
+    // Get applications with manual population
+    const applications = await Application.find().sort('-createdAt');
+    console.log('Found raw applications:', applications.length);
     
-    // Debug each application
-    applications.forEach((app, index) => {
-      console.log(`Application ${index}:`, {
-        id: app._id,
-        studentId: app.student?._id || 'NO_STUDENT_ID',
-        studentName: app.student?.name || 'NO_NAME',
-        hackathonName: app.hackathon?.name || 'NO_HACKATHON'
-      });
-    });
+    const populatedApplications = [];
     
-    res.json(applications);
+    for (const app of applications) {
+      try {
+        const student = await User.findById(app.student);
+        const hackathon = await Hackathon.findById(app.hackathon);
+        
+        if (student && hackathon) {
+          populatedApplications.push({
+            _id: app._id,
+            student: {
+              _id: student._id,
+              name: student.name,
+              email: student.email,
+              rollNumber: student.rollNumber,
+              department: student.department,
+              year: student.year,
+              section: student.section
+            },
+            hackathon: {
+              _id: hackathon._id,
+              name: hackathon.name,
+              dates: hackathon.dates,
+              mode: hackathon.mode
+            },
+            status: app.status || 'pending',
+            createdAt: app.createdAt
+          });
+        }
+      } catch (err) {
+        console.error('Error processing application:', app._id, err);
+      }
+    }
+    
+    console.log('Populated applications:', populatedApplications.length);
+    res.json(populatedApplications);
+    
   } catch (error) {
     console.error('Error in getAllApplications:', error);
     res.status(500).json({ message: error.message });

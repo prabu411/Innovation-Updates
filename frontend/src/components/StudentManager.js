@@ -15,25 +15,12 @@ const StudentManager = ({ hackathons }) => {
   const fetchStudents = async () => {
     try {
       setLoading(true);
-      console.log('Fetching detailed applications...');
+      console.log('Fetching applications using existing API...');
       
-      // Use the correct API URL with base URL
-      const API_URL = process.env.NODE_ENV === 'production' 
-        ? 'https://innovation-updates.onrender.com'
-        : 'http://localhost:5003';
-      
-      const response = await fetch(`${API_URL}/api/applications-detailed`, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-      
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
-      }
-      
-      const data = await response.json();
-      console.log('Detailed applications received:', data);
+      // Use existing applicationAPI instead of new endpoint
+      const response = await applicationAPI.getAllApplications();
+      const data = response.data;
+      console.log('Applications received:', data);
       
       if (!Array.isArray(data)) {
         console.error('Data is not an array:', data);
