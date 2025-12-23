@@ -48,6 +48,7 @@ const HackathonManager = ({ hackathons, fetchHackathons, refreshStudents, should
   const fetchApplications = async () => {
     try {
       const { data } = await applicationAPI.getAllApplications();
+      console.log('Fetched applications:', data);
       setApplications(data);
       
       if (refreshStudents) {
@@ -64,7 +65,9 @@ const HackathonManager = ({ hackathons, fetchHackathons, refreshStudents, should
   };
 
   const getStudentsForHackathon = (hackathonId) => {
-    return applications.filter(app => app.hackathon?._id === hackathonId && app.student);
+    const filtered = applications.filter(app => app.hackathon?._id === hackathonId && app.student);
+    console.log('Students for hackathon:', hackathonId, filtered);
+    return filtered;
   };
 
   const toggleStudentDetails = (hackathonId) => {
