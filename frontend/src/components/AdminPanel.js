@@ -18,7 +18,7 @@ const AdminPanel = () => {
   };
 
   const resetData = async () => {
-    if (!window.confirm('This will clean ALL data (hackathons, students, applications). Are you sure?')) return;
+    if (!window.confirm('This will create demo data (1 hackathon, 1 student, 1 application). Continue?')) return;
     
     setLoading(true);
     try {

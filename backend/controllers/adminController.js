@@ -15,10 +15,10 @@ exports.resetData = async (req, res) => {
     await Hackathon.deleteMany({});
     await User.deleteMany({ role: 'student' });
     
-    console.log('✅ All data cleaned - fresh start');
+    console.log('✅ All data cleaned');
 
     res.json({
-      message: 'All data cleaned successfully. System is now ready for real student registrations.',
+      message: 'All data cleaned. Only real student applications will be displayed.',
       summary: {
         hackathons: 0,
         students: 0,

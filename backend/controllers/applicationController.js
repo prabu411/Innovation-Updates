@@ -46,48 +46,15 @@ exports.getMyApplications = async (req, res) => {
 exports.getAllApplications = async (req, res) => {
   try {
     console.log('Fetching all applications...');
+    const applications = await Application.find()
+      .populate('student', 'name email rollNumber department year section')
+      .populate('hackathon', 'name dates mode')
+      .sort('-createdAt');
     
-    // Get applications with manual population
-    const applications = await Application.find().sort('-createdAt');
-    console.log('Found raw applications:', applications.length);
+    console.log('Found applications:', applications.length);
     
-    const populatedApplications = [];
-    
-    for (const app of applications) {
-      try {
-        const student = await User.findById(app.student);
-        const hackathon = await Hackathon.findById(app.hackathon);
-        
-        if (student && hackathon) {
-          populatedApplications.push({
-            _id: app._id,
-            student: {
-              _id: student._id,
-              name: student.name,
-              email: student.email,
-              rollNumber: student.rollNumber,
-              department: student.department,
-              year: student.year,
-              section: student.section
-            },
-            hackathon: {
-              _id: hackathon._id,
-              name: hackathon.name,
-              dates: hackathon.dates,
-              mode: hackathon.mode
-            },
-            status: app.status || 'pending',
-            createdAt: app.createdAt
-          });
-        }
-      } catch (err) {
-        console.error('Error processing application:', app._id, err);
-      }
-    }
-    
-    console.log('Populated applications:', populatedApplications.length);
-    res.json(populatedApplications);
-    
+    // Return applications as-is, even if populate fails
+    res.json(applications);
   } catch (error) {
     console.error('Error in getAllApplications:', error);
     res.status(500).json({ message: error.message });
