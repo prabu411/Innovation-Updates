@@ -211,7 +211,7 @@ const HackathonManager = ({ hackathons, fetchHackathons, refreshStudents, should
                 {isExpanded && (
                   <div className="mb-4 p-3 bg-gray-800/50 rounded-lg max-h-40 overflow-y-auto">
                     <h4 className="text-sm font-semibold text-white mb-2">Applied Students ({studentCount}):</h4>
-                    {studentCount === 0 ? (
+                    {students.length === 0 ? (
                       <p className="text-gray-400 text-xs">No applications yet.</p>
                     ) : (
                       <div className="space-y-1">
