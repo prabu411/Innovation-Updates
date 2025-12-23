@@ -5,86 +5,54 @@ const Registration = require('../models/registrationModel');
 
 exports.getApplicationsWithDetails = async (req, res) => {
   try {
-    console.log('Getting applications and registrations with manual join...');
+    console.log('=== DATABASE DEBUG ===');
     
-    // Get all applications
-    const applications = await Application.find().sort('-createdAt');
-    console.log('Found applications:', applications.length);
+    // Check what's in each collection
+    const applications = await Application.find();
+    const registrations = await Registration.find();
+    const users = await User.find({ role: 'student' });
+    const hackathons = await Hackathon.find();
     
-    // Get all registrations
-    const registrations = await Registration.find().sort('-createdAt');
-    console.log('Found registrations:', registrations.length);
+    console.log('Applications count:', applications.length);
+    console.log('Registrations count:', registrations.length);
+    console.log('Students count:', users.length);
+    console.log('Hackathons count:', hackathons.length);
     
-    // Manually get details for applications
-    const detailedApplications = [];
-    
-    for (const app of applications) {
-      const student = await User.findById(app.student);
-      const hackathon = await Hackathon.findById(app.hackathon);
-      
-      if (student && hackathon) {
-        detailedApplications.push({
-          _id: app._id,
-          student: {
-            _id: student._id,
-            name: student.name,
-            email: student.email,
-            rollNumber: student.rollNumber,
-            department: student.department,
-            year: student.year,
-            section: student.section
-          },
-          hackathon: {
-            _id: hackathon._id,
-            name: hackathon.name,
-            dates: hackathon.dates,
-            mode: hackathon.mode
-          },
-          status: app.status || 'pending',
-          createdAt: app.createdAt,
-          type: 'application'
-        });
-      }
-    }
-    
-    // Manually get details for registrations
-    for (const reg of registrations) {
-      const student = await User.findById(reg.user);
-      const hackathon = await Hackathon.findById(reg.hackathon);
-      
-      if (student && hackathon) {
-        detailedApplications.push({
-          _id: reg._id,
-          student: {
-            _id: student._id,
-            name: student.name,
-            email: student.email,
-            rollNumber: student.rollNumber,
-            department: student.department,
-            year: student.year,
-            section: student.section
-          },
-          hackathon: {
-            _id: hackathon._id,
-            name: hackathon.name,
-            dates: hackathon.dates,
-            mode: hackathon.mode
-          },
-          status: 'registered',
-          createdAt: reg.createdAt || reg.registrationDate,
-          type: 'registration'
-        });
-      }
-    }
-    
-    // Sort by creation date
-    detailedApplications.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-    
-    console.log('Total detailed records:', detailedApplications.length);
-    res.json(detailedApplications);
+    // Return debug info
+    res.json({
+      debug: {
+        applications: applications.length,
+        registrations: registrations.length,
+        students: users.length,
+        hackathons: hackathons.length
+      },
+      applications: applications.map(app => ({
+        _id: app._id,
+        student: app.student,
+        hackathon: app.hackathon,
+        status: app.status,
+        createdAt: app.createdAt
+      })),
+      registrations: registrations.map(reg => ({
+        _id: reg._id,
+        user: reg.user,
+        hackathon: reg.hackathon,
+        createdAt: reg.createdAt
+      })),
+      students: users.map(user => ({
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        rollNumber: user.rollNumber
+      })),
+      hackathons: hackathons.map(hack => ({
+        _id: hack._id,
+        name: hack.name
+      }))
+    });
     
   } catch (error) {
-    console.error('Error getting detailed applications:', error);
+    console.error('Error getting debug info:', error);
     res.status(500).json({ message: error.message });
   }
 };
