@@ -7,13 +7,13 @@ const AdminPanel = () => {
   const [result, setResult] = useState(null);
 
   const resetData = async () => {
-    if (!window.confirm('This will reset ALL data. Are you sure?')) return;
+    if (!window.confirm('This will clean ALL data (hackathons, students, applications). Are you sure?')) return;
     
     setLoading(true);
     try {
       const response = await API.post('/admin/reset-data');
       setResult(response.data);
-      alert('Data reset successful! Refresh the page to see changes.');
+      alert('Data cleaned successfully! System is now ready for real student registrations.');
     } catch (error) {
       console.error('Reset failed:', error);
       alert('Reset failed: ' + (error.response?.data?.message || error.message));
@@ -35,7 +35,7 @@ const AdminPanel = () => {
         className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50"
       >
         <RefreshCw className={loading ? 'animate-spin' : ''} size={18} />
-        {loading ? 'Resetting...' : 'Reset Production Data'}
+        {loading ? 'Cleaning...' : 'Clean All Data'}
       </button>
       
       {result && (
